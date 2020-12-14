@@ -24,3 +24,6 @@ finals = [prod1*remainder*inverse for prod1, remainder, inverse in zip(prodList,
 print(sum(finals) % prod)
 
 
+
+
+
