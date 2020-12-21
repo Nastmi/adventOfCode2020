@@ -1,5 +1,5 @@
 from math import sqrt
-l = open("day20/input.txt").read().split("\n\n")
+l = open("day20/input2.txt").read().split("\n\n")
 images = {image.split("\n")[0][5:-1]:image.split("\n")[1:] for image in l}
 
 
@@ -63,35 +63,29 @@ for key, image in images.items():
 for item in start:
     print(item)"""
 
-"""grid = [["1951"]]
+grid = [["1951"]]
 grid_conf = [[['#...##.#..', '..#.#..#.#', '.###....#.', '###.##.##.', '.###.#####', '.##.#....#', '#...######', '.....#..##', '#.####...#', '#.##...##.']]]
 cur_conf = ['#...##.#..', '..#.#..#.#', '.###....#.', '###.##.##.', '.###.#####', '.##.#....#', '#...######', '.....#..##', '#.####...#', '#.##...##.']
 start_config = ['#...##.#..', '..#.#..#.#', '.###....#.', '###.##.##.', '.###.#####', '.##.#....#', '#...######', '.....#..##', '#.####...#', '#.##...##.']
-cur_key = "1951"""
-grid = [["1759"]]
-grid_conf = [[['..###...##', '#..##.#..#', '#......#..', '....#.....', '.#.#....##', '.......#..', '#.#......#', '##........', '#........#', '#.#.#..#..']]]
-cur_conf = ['..###...##', '#..##.#..#', '#......#..', '....#.....', '.#.#....##', '.......#..', '#.#......#', '##........', '#........#', '#.#.#..#..']
-start_config = ['..###...##', '#..##.#..#', '#......#..', '....#.....', '.#.#....##', '.......#..', '#.#......#', '##........', '#........#', '#.#.#..#..']
-cur_key = "1759"
+cur_key = "1951"
+"""grid = [["2801"]]
+grid_conf = [[['###.#.#.##', '..#..#....', '#........#', '....#....#', '.#........', '..........', '..........', '#.#.##....', '#.#...#..#', '.##....###']]]
+cur_conf = ['###.#.#.##', '..#..#....', '#........#', '....#....#', '.#........', '..........', '..........', '#.#.##....', '#.#...#..#', '.##....###']
+start_config = ['###.#.#.##', '..#..#....', '#........#', '....#....#', '.#........', '..........', '..........', '#.#.##....', '#.#...#..#', '.##....###']
+cur_key = "2801"""
 
-
-all_keys = [key for key in images.keys()]
 for i in range(int(sqrt(len(images)))):
     for j in range(int(sqrt(len(images)))):
         for key, image in images.items():
-            found_right = False
             for conf in get_all_conf(image):
                 if(key != cur_key):
                     mtch = get_matches(cur_conf, conf)
                     if(mtch == "right"):
-                        if(key in all_keys):
-                            grid[i].append(key)
-                            grid_conf[i].append(conf)
-                            cur_conf = conf
-                            all_keys.remove(key)
-                            found_right = True
-                            cur_key = key
-                            break
+                        grid[i].append(key)
+                        grid_conf[i].append(conf)
+                        cur_conf = conf
+                        cur_key = key
+                        break
     for key, image in images.items():
         found_bottom = False
         for conf in get_all_conf(image):
@@ -108,32 +102,6 @@ for i in range(int(sqrt(len(images)))):
         if(found_bottom):
             break
 
-"""for i in range(int(sqrt(len(images)))):
-    for j in range(int(sqrt(len(images)))):
-        for key, image in images.items():
-            for conf in get_all_conf(image):
-                if(key != cur_key):
-                    mtch = get_matches(cur_conf, conf)
-                    if(mtch == "right"):
-                        if(key not in grid[i]):
-                            grid[i].append(key)
-                            grid_conf[i].append(conf)
-                            cur_conf = conf
-                            break
-                        else:
-                            if(j > 0):
-                                j -= 1
-    for key, image in images.items():
-            for conf in get_all_conf(image):
-                if(key != cur_key):
-                    mtch = get_matches(start_config, conf)
-                    if(mtch == "bottom"):
-                        grid.append([key])
-                        grid_conf.append([conf])
-                        start_config = conf
-                        cur_conf = conf
-                        break"""
-
 for i, item in enumerate(grid_conf):
     for j, image in enumerate(item):
         grid_conf[i][j].pop(0)
@@ -141,6 +109,8 @@ for i, item in enumerate(grid_conf):
         for k, single in enumerate(image):
             new_s = single[1:-1]
             grid_conf[i][j][k] = new_s
+
+
 
 indexes = [0, 6, 11, 12, 17, 18, 23, 24, 25, 31, 34, 37, 40, 43, 46]
 monsters = 0
@@ -151,6 +121,17 @@ for i, item in enumerate(grid_conf):
         for k in range(len(item)):
             ln += item[k][j]
         final_grid.append(ln)
+
+
+def get_all_conf(grid):
+    all_configs = [grid, grid[::-1]]
+    grid = ["".join(item) for item in list(zip(*grid[::-1]))]
+    all_configs.extend([grid, grid[::-1]])
+    grid = ["".join(item) for item in list(zip(*grid[::-1]))]
+    all_configs.extend([grid, grid[::-1]])
+    grid = ["".join(item) for item in list(zip(*grid[::-1]))]
+    all_configs.extend([grid, grid[::-1]])
+    return all_configs
 
 for conf in get_all_conf(final_grid):
     joined = "".join([line for item in conf for image in item for line in image])
@@ -166,6 +147,19 @@ for conf in get_all_conf(final_grid):
             monsters += 1
     print(monsters)
 
+for conf in get_all_conf(final_grid):
+    joined = "".join([line for item in conf for image in item for line in image])
+    for i, __ in enumerate(joined):
+        slc = joined[i:48+i]
+        if(len(slc) < 48):
+            break
+        correct = 0
+        for idx in indexes:
+            if(slc[idx] == "#"):
+                correct += 1
+        if(correct == len(indexes)):
+            monsters += 1
+    print(monsters)
     
                 
 
